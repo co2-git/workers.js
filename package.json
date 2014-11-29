@@ -1,0 +1,19 @@
+{
+  "name": "workers.js",
+  "version": "0.0.2",
+  "description": "Cluster a node script from terminal or from another node script",
+  "main": "index.js",
+  "bin": {
+    "workers": "bin/workers.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/co2-git/workers.js.git"
+  },
+  "author": "francoisr <francoisrvespa@gmail.com>",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "colors": "~1.0.3"
+  }
+}
