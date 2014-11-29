@@ -4,7 +4,7 @@
   "description": "Cluster a node script from terminal or from another node script",
   "main": "index.js",
   "bin": {
-    "workers": "bin/workers.js"
+    "workers.js": "bin/workers.js"
   },
   "repository": {
     "type": "git",
