@@ -1,27 +1,40 @@
 #!/usr/bin/env node
 
-function send (msg, fn) {
-  console[fn || 'log'](JSON.stringify(msg) + ',');
-}
+var config = require('../config.json');
 
-send.message = function (message) {
-  send({ 'workers.js': message });
-}
+var id = process.argv[2];
 
-send.error = function (error) {
-  send({ error: {
-    name: error.name,
-    message: error.message
-  } });
-}
+var script = process.argv[3];
 
-var script = process.argv[2];
+var path = require('path');
 
 if ( ! script ) {
   throw new Error('Missing script');
 }
 
+var log = require('fs').createWriteStream(path.join(config.log.dir,
+  config.log.prefix + id), {
+  flags: 'a'
+});
+
 var forkNumber = require('os').cpus().length;
+
+function send (msg, fn) {
+  log.write(JSON.stringify(msg));
+}
+
+send.message = function (message) {
+  send(message);
+}
+
+send.error = function (error) {
+  send({ error: {
+    name: error.name,
+    message: error.message,
+    stack: error.stack.split(/\n/)
+  } });
+}
+
 
 send.message({ script: script, forks: forkNumber });
 

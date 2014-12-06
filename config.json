@@ -1,0 +1,6 @@
+{
+	"log": {
+		"dir": "/tmp",
+		"prefix": "workersjs-"
+	}
+}

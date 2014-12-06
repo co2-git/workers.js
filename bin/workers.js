@@ -6,6 +6,10 @@ var domain = require('domain').create();
 
 var format = require('util').format;
 
+var config = require('../config.json');
+
+var path = require('path');
+
 domain.on('error', function (error) {
   try {
     console.log('error'.red, error.stack.yellow);
@@ -19,50 +23,61 @@ domain.on('error', function (error) {
 domain.run(function () {
   var package = require('../package.json');
 
-  var help = [];
+  var bytes = 0;
 
-  help.push(format(' %s v%s', package.name.bold, package.version.italic));
+  function outputLog (id, cb) {
+    var read = [];
 
-  help.push(' ' + package.description.grey);
+    require('fs').createReadStream(path.join(config.log.dir,
+      config.log.prefix + id), {
+      start: bytes
+    })
 
-  help.push(format(' * Usage: %s <action> [<option>...] <script>', package.name).cyan);
+      .on('data', function (data) {
+        read.push(data.toString());
+        bytes += data.length;
 
-  help.push(format(' # Execute a script in cluster mode').bold.blue);
+        console.log(' ➜ ' + data.toString().grey);
+      })
 
-  help.push(format(' %s cluster script.js', package.name).yellow);
-
-  help.push(format(' # Get script status').bold.blue);
-
-  help.push(format(' %s status script.js', package.name).yellow);
-
-  help.push(format(' # Reload script').bold.blue);
-
-  help.push(format(' %s reload script.js', package.name).yellow);
-
-  help.push(format(' # Stop script').bold.blue);
-
-  help.push(format(' %s exit script.js', package.name).yellow);
-
-  var action = process.argv[2] || 'help';
-
-  switch ( action ) {
-    case 'help':
-      console.log();
-      console.log(help.join("\n\n"));
-      console.log();
-      break;
-
-    case 'cluster':
-      var script = process.argv[3];
-
-      if ( ! script ) {
-        throw new Error('Missing script');
-      }
-
-      require('../lib/cluster')(script, {}, function () {
-        console.log(arguments);
+      .on('end', function () {
+        if ( typeof cb == 'function' ) {
+          cb(null, read, bytes);
+        }
       });
-
-      break;
   }
+
+  console.log(format(' %s v%s', package.name.bold, package.version.italic));
+
+  if ( ! process.argv[2] ) {
+    console.log(' * Usage: workersjs  <script>');
+    console.log('   <script>  The file to cluster (ie, server.js)');
+    return;
+  }
+
+  var script = process.argv[2];
+
+  if ( ! script ) {
+    throw new Error('Missing script');
+  }
+
+  require('../lib/cluster')(script, {}, function (error, id) {
+    if ( error ) {
+      console.log((('× ' + error.name).bold + ' ' + error.message).red);
+      error.stack.split(/\n/).forEach(function (stack, index) {
+        if ( index ) {
+          console.log(stack.yellow);
+        }
+      });
+      return;
+    }
+
+    outputLog(id, function () {
+      require('fs').watch(path.join(config.log.dir,
+        config.log.prefix + id), function () {
+        // console.log(arguments)
+        outputLog(id);
+      });
+    });    
+  });
 });
