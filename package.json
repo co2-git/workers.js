@@ -1,10 +1,10 @@
 {
-  "name": "workers.js",
-  "version": "0.0.2",
+  "name": "workersjs",
+  "version": "0.0.3",
   "description": "Cluster a node script from terminal or from another node script",
   "main": "index.js",
   "bin": {
-    "workers.js": "bin/workers.js"
+    "workersjs": "bin/workers.js"
   },
   "repository": {
     "type": "git",

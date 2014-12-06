@@ -9,8 +9,21 @@ Starts a script in cluster mode. Useful for reloading HTTP servers with zero-sec
 
     npm install -g co2-git/workers.js
 
-## CLI
+## Usage
+
+Story: you have a file, `server.js`, and you want to call it in cluster mode.
+
+```js
+// server.js
+require('http')
+	.createServer(require('express')())
+	.listen(3000);
+```
 
 ```bash
-workers.js cluster server.js
+# From terminal
+workersjs cluster server.js
+  ✔ clustered server.js
+    pid: 1000 started: 20:04:30
+    workers: 4
 ```
