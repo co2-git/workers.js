@@ -1,6 +1,6 @@
 {
   "name": "workersjs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Cluster a node script from terminal or from another node script",
   "main": "index.js",
   "bin": {
