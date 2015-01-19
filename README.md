@@ -1,4 +1,4 @@
 workers.js
 ==========
 
-Project moved to: [https://github.com/co2-git/clusterz](co2-git/clusterz)
+Project moved to: [co2-git/clusterz](https://github.com/co2-git/clusterz)
